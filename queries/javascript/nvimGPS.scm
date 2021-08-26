@@ -18,3 +18,8 @@
 ((variable_declarator
 	name: (identifier) @function-name
 	value: (arrow_function)) @scope-root)
+
+; Function Expression
+((variable_declarator
+	name: (identifier) @function-name
+	value: (function)) @scope-root)
