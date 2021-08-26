@@ -13,3 +13,8 @@
 ((method_definition
 	name: (property_identifier) @method-name
 	body: (statement_block)) @scope-root)
+
+; Arrow Function
+((variable_declarator
+	name: (identifier) @function-name
+	value: (arrow_function)) @scope-root)
