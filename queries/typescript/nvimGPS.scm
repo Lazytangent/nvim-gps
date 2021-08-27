@@ -25,9 +25,15 @@
 	name: (property_identifier) @method-name
 	body: (statement_block)) @scope-root)
 
+; Describe blocks
 ((expression_statement
 	(call_expression
 		function: (identifier) @function-name
 		arguments: (arguments
 			(string) @test-name
 			(arrow_function)))) @scope-root-2)
+
+; Arrow function methods
+((public_field_definition
+	name: (property_identifier) @method-name
+	value: (arrow_function)) @scope-root)
