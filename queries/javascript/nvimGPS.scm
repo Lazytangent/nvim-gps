@@ -23,3 +23,12 @@
 ((variable_declarator
 	name: (identifier) @function-name
 	value: (function)) @scope-root)
+
+; Describe Callback
+((call_expression
+	function: (identifier) @function-name
+	arguments: (arguments
+		string: (string_fragment) @method-name
+		(arrow_function
+			parameters: (formal_parameters)
+			body: (statement_block)) @scope-root)))
