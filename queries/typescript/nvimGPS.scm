@@ -24,3 +24,10 @@
 ((method_definition
 	name: (property_identifier) @method-name
 	body: (statement_block)) @scope-root)
+
+((expression_statement
+	(call_expression
+		function: (identifier) @function-name
+		arguments: (arguments
+			(string) @test-name
+			(arrow_function)))) @scope-root-2)
