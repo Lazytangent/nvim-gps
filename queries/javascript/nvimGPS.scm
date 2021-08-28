@@ -31,3 +31,8 @@
 		arguments: (arguments
 			(string) @test-name
 			(arrow_function)))) @scope-root-2)
+
+; Arrow function methods
+((field_definition
+	property: (property_identifier) @method-name
+	value: (arrow_function)) @scope-root)
