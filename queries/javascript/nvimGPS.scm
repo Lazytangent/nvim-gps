@@ -29,7 +29,7 @@
 	(call_expression
 		function: (identifier) @function-name
 		arguments: (arguments
-			(string) @test-name
+			(string) @method-name
 			(arrow_function)))) @scope-root-2)
 
 ; Arrow function methods

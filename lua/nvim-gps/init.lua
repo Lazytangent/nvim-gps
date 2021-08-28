@@ -9,7 +9,6 @@ local config = {
 		["class-name"] = ' ',
 		["function-name"] = ' ',
 		["method-name"] = ' ',
-		["test-name"] = ''
 	},
 	languages = {
 		["bash"] = true,       -- bash and zsh
