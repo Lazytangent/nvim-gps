@@ -8,7 +8,7 @@ local config = {
 	icons = {
 		["class-name"] = ' ',
 		["function-name"] = ' ',
-		["method-name"] = ' ',
+		["method-name"] = ' '
 	},
 	languages = {
 		["bash"] = true,       -- bash and zsh
