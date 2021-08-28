@@ -28,10 +28,10 @@
 ; Describe blocks
 ((expression_statement
 	(call_expression
-		function: (identifier) @function-name
+		function: (identifier)
 		arguments: (arguments
 			(string) @method-name
-			(arrow_function)))) @scope-root-2)
+			(arrow_function)))) @scope-root)
 
 ; Arrow function methods
 ((public_field_definition
