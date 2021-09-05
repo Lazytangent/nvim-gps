@@ -1,6 +1,5 @@
 local ts_utils = require("nvim-treesitter.ts_utils")
 local ts_parsers = require("nvim-treesitter.parsers")
-local ts_queries = require("nvim-treesitter.query")
 
 local M = {}
 
@@ -15,50 +14,54 @@ local config = {
 		["c"] = true,
 		["cpp"] = true,
 		["elixir"] = true,
+		["fennel"] = true,
 		["go"] = true,
 		["java"] = true,
+		["jsx"] = true,
 		["javascript"] = true,
 		["lua"] = true,
 		["python"] = true,
 		["rust"] = true,
+		["tsx"] = true,
 		["typescript"] = true,
 	},
 	separator = ' > ',
 }
-
--- TreeSitter module setup
-function M.init()
-	require("nvim-treesitter").define_modules {
-		nvimGPS = {
-			module_path = "nvim-gps",
-			is_supported = function(lang)
-				return ts_queries.get_query(lang, "nvimGPS") ~= nil
-			end
-		}
-	}
-end
-
-function M.attach(bufnr, lang)
-	-- Nothing
-end
-
-function M.detach(bufnr)
-	-- Nothing
-end
 
 local cache_value = ""
 local gps_query = nil
 local bufnr = 0
 local filelang = ""
 local setup_complete = false
+local transform = nil
+
+local function default_transform(capture_name, capture_text)
+	if config.icons[capture_name] ~= nil then
+		return config.icons[capture_name] .. capture_text
+	end
+end
+
+local transform_lang = {
+	["cpp"] = function(capture_name, capture_text)
+		if capture_name == "multi-class-name" then
+			return config.icons["class-name"]..string.gsub(capture_text, "%s*%:%:%s*", config.separator..config.icons["class-name"])
+		else
+			return default_transform(capture_name, capture_text)
+		end
+	end
+}
 
 function M.is_available()
 	return setup_complete and config.languages[filelang]
 end
 
-function M.update_query()
+function M.update_fileinfo()
 	filelang = ts_parsers.ft_to_lang(vim.bo.filetype)
 	bufnr = vim.fn.bufnr()
+	transform = transform_lang[filelang]
+end
+
+function M.update_query()
 	gps_query = vim.treesitter.get_query(filelang, "nvimGPS")
 end
 
@@ -66,7 +69,12 @@ function M.setup(user_config)
 	-- By default enable all languages
 	for k, _ in pairs(config.languages) do
 		config.languages[k] = ts_parsers.has_parser(k)
+		if transform_lang[k] == nil then
+			transform_lang[k] = default_transform
+		end
 	end
+
+	transform = default_transform
 
 	-- Override default with user settings
 	if user_config then
@@ -91,6 +99,7 @@ function M.setup(user_config)
 	vim.cmd[[
 		augroup nvimGPS
 		autocmd!
+		autocmd BufEnter * silent! lua require("nvim-gps").update_fileinfo()
 		autocmd BufEnter * silent! lua require("nvim-gps").update_query()
 		autocmd InsertLeave * silent! lua require("nvim-gps").update_query()
 		augroup END
@@ -119,7 +128,6 @@ function M.get_location()
 	end
 
 	local current_node = ts_utils.get_node_at_cursor()
-	local icons = config.icons
 
 	local node_text = {}
 	local node = current_node
@@ -133,17 +141,17 @@ function M.get_location()
 
 				capture_ID, capture_node = iter()
 				local capture_name = gps_query.captures[capture_ID]
-				table.insert(node_text, 1, icons[capture_name]..ts_utils.get_node_text(capture_node)[1])
+				table.insert(node_text, 1, transform(capture_name, ts_utils.get_node_text(capture_node)[1]))
 
 			elseif gps_query.captures[capture_ID] == "scope-root-2" then
 
 				capture_ID, capture_node = iter()
 				local capture_name = gps_query.captures[capture_ID]
-				table.insert(node_text, 1, icons[capture_name]..ts_utils.get_node_text(capture_node)[1])
+				table.insert(node_text, 1, transform(capture_name, ts_utils.get_node_text(capture_node)[1]))
 
 				capture_ID, capture_node = iter()
 				capture_name = gps_query.captures[capture_ID]
-				table.insert(node_text, 2, icons[capture_name]..ts_utils.get_node_text(capture_node)[1])
+				table.insert(node_text, 2, transform(capture_name, ts_utils.get_node_text(capture_node)[1]))
 
 			end
 		end
