@@ -10,9 +10,9 @@
 	body: (field_declaration_list)) @scope-root)
 
 ; Namespace
-((namespace_definition
-	name: (identifier) @class-name
-	body: (declaration_list)) @scope-root)
+; ((namespace_definition
+; 	name: (identifier) @class-name
+; 	body: (declaration_list)) @scope-root)
 
 ; Function
 ((function_definition
